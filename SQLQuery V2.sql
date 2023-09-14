@@ -2,6 +2,7 @@
 
 SELECT *
 FROM PortfolioProject.dbo.CovidDeaths
+WHERE continent is not null
 Order by 3,4
 
 SELECT *
@@ -10,6 +11,7 @@ Order by 3,4
 
 SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM PortfolioProject.dbo.CovidDeaths
+WHERE continent is not null
 Order by 1,2
 
 --Looking at Total Cases vs Total Deaths 
@@ -17,20 +19,23 @@ Order by 1,2
 SELECT location, date, total_cases, total_deaths,(CONVERT(float, total_deaths)/NULLIF(CONVERT(float, total_cases), 0))* 100 as DeathPercentage
 FROM PortfolioProject.dbo.CovidDeaths
 WHERE location like '%states%'
+AND continent is not null
 Order by 1,2
 
 --Looking at Total Cases vs Population 
 --Shows percentage of population got Covid
-SELECT location, date, total_cases, population,(CONVERT(float, total_cases)/ (population)) * 100 as PercentPopulationInfected
+SELECT location, date, total_cases,(CONVERT(float, total_cases)/ (population)) * 100 as PercentPopulationInfected
 FROM PortfolioProject.dbo.CovidDeaths
---WHERE location like '%states%'
+WHERE location like '%states%'
+and continent is not null
 Order by 1,2
 
 --Countries with Highest Infection Rate compared to population 
 
-SELECT location,population, MAX (CAST (total_cases as int)) as HighestInfectionCount
+SELECT location,population, MAX (CAST (total_cases as int)) as HighestInfectionCount, MAX ((CAST (total_cases as int))/population) *100 as PercentPopulationInfected
 FROM PortfolioProject.dbo.CovidDeaths
 GROUP BY location, population
+Order by PercentPopulationInfected desc 
 --WHERE location like '%states%'
 
 --Showing countries with Highest Death count per population
